@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { addReminder, deleteReminder } from "../actions/index";
+import moment from 'moment';
 
 class App extends Component {
 
@@ -28,7 +29,10 @@ class App extends Component {
                   reminders.map(reminder => {
                       return(
                           <li key={reminder.id} className="list-group-item">
-                              <div className="list-item">{reminder.text}</div>
+                              <div className="list-item">
+                                  <div>{reminder.text}</div>
+                                  <div><em>{ moment(new Date(reminder.dueDate)).fromNow() }</em></div>
+                              </div>
                               <div className="list-item delete-button" onClick={ () => this.deleteReminderLocal(reminder.id) }>&#x2715;</div>
                           </li>
                       );
@@ -49,7 +53,11 @@ class App extends Component {
                 <div className="form-inline">
                     <div className="form-group">
                         <input type="text" className="form-control" placeholder="Yo what's up ?" onChange={ event => this.setState({text: event.target.value}) }/>
-                        <input type="datetime-local" className="form-control" onChange={ event => this.setState({ dueDate: event.target.value })}/>
+                        <input type="datetime-local" className="form-control" onChange={ event => this.setState({ dueDate: event.target.value })} onKeyPress={event => {
+                            if (event.key === 'Enter') {
+                                this.addReminderLocal();
+                            }
+                        }}/>
                     </div>
                     <button className="btn btn-success" onClick={ () => this.addReminderLocal() }>
                         Add reminder
